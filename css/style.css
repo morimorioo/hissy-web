@@ -1,0 +1,620 @@
+/* ============================================================
+   hissy — 스타일 (피그마 1차 시안 기준: 블랙 테마)
+   ┌────────────────────────────────────────────┐
+   │  브랜드 토큰: 수치 조정은 여기 :root 에서    │
+   └────────────────────────────────────────────┘
+   ============================================================ */
+
+/* 서브 폰트: D2Coding (로컬 파일 — 오프라인 안전) */
+@font-face {
+  font-family: 'D2Coding';
+  src: url('../assets/fonts/D2Coding.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
+
+:root {
+  /* 컬러 — 시안: 블랙 베이스 + 화이트 */
+  --bg: #000000;
+  --ink: #ffffff;
+  --dim: rgba(255, 255, 255, 0.3);   /* 캡션 서브/설명 30% */
+  --dim2: rgba(255, 255, 255, 0.4);
+  --box: #d9d9d9;                     /* 영상 자리 회색 박스 */
+  --accent: #FF3000;                  /* 레드 극소량 */
+
+  /* 폰트 — Title: Helvetica Neue 55 / Nav: Helvetica Now / Sub: D2Coding
+     ※ 정식 폰트 파일 받으면 @font-face 추가 후 이름만 교체 */
+  --font-title: 'Helvetica Neue LT Std', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-nav: 'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'D2Coding', 'SF Mono', 'Courier New', monospace;
+
+  /* 시안(1600×1000) 대비 배율 계산에 쓰는 기준 */
+  --frame-h: 1000;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-nav);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+.svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ─────────── 고정 헤더 (시안: 좌 메뉴 / 중앙 로고 / 우 KR·EN) ─────────── */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  padding: 20px 28px 30px;
+  /* 네비 뒤 배경 블러 — 아래로 갈수록 연해지며 자연스럽게 사라짐 */
+  background: rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+}
+
+.nav-left {
+  display: flex;
+  gap: 24px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.nav-left a { transition: opacity 0.2s; }
+.nav-left a:hover { opacity: 0.6; }
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+}
+.logo img { height: 19px; display: block; }
+
+.lang-toggle {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.lang-btn { color: var(--dim); transition: color 0.25s; padding: 2px; }
+.lang-btn.is-active { color: var(--ink); }
+
+.nav-left a.is-disabled { color: var(--dim); cursor: default; }
+.nav-left a.is-disabled:hover { opacity: 1; }
+
+/* ─────────── 우측 페이지 인덱스 (점프 내비) ─────────── */
+.page-index {
+  position: fixed;
+  right: 28px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 3px; /* 간격 좁게 */
+  align-items: flex-end;
+}
+.page-index button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  transition: color 0.25s;
+}
+/* 평소엔 라인만 — 터치/호버 시 "01 Hissy™" 순서로 나타남 */
+.page-index button .pi-num,
+.page-index button .pi-name {
+  opacity: 0;
+  translate: 8px 0;
+  transition: opacity 0.25s, translate 0.25s;
+  white-space: nowrap;
+}
+.page-index button .pi-name { font-size: 10px; letter-spacing: 0.06em; }
+.page-index button:hover .pi-num,
+.page-index button:hover .pi-name,
+.page-index button:active .pi-num,
+.page-index button:active .pi-name {
+  opacity: 1;
+  translate: 0 0;
+}
+.page-index button::after {
+  content: '';
+  width: 8px;   /* 라인 짧게 */
+  height: 3px;  /* 굵게 */
+  border-radius: 2px;
+  background: currentColor;
+  transition: width 0.25s;
+}
+.page-index button.is-active { color: var(--ink); }
+.page-index button.is-active::after { width: 14px; }
+
+/* ─────────── 고정 푸터 (우하단) ─────────── */
+.site-footer {
+  position: fixed;
+  bottom: 20px;
+  right: 28px;
+  z-index: 40;
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+/* ─────────── 섹션 공통 캡션 (하단 중앙, D2Coding) ─────────── */
+.section-cap {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  width: min(700px, 80vw);
+  pointer-events: none;
+}
+.cap-main { color: var(--ink); }
+.cap-sub { color: var(--dim); margin-top: 6px; }
+
+/* ─────────── 1. 히어로 ─────────── */
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+#hazeCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* 세로 스와이프는 페이지 스크롤로 통과, 탭·드래그는 셰이더 인터랙션 */
+  touch-action: pan-y;
+}
+
+.hero-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-fallback h1 { font-family: var(--font-title); font-size: 16vw; font-weight: 400; letter-spacing: -0.04em; }
+
+/* ─────────── 2. 히씨가 정의한 미래 ─────────── */
+.future {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* 좌측 온도 블록 — 구체와 세로 중앙 정렬
+   (등장 효과가 translate 채널을 쓰므로 정렬은 transform으로) */
+.future-temp {
+  position: absolute;
+  left: 7.4vw;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.future-temp-label {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: -0.025em;
+  color: var(--dim2);
+  margin-bottom: 10px;
+}
+.future-temp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  filter: blur(0.5px); /* 시안의 미묘한 열기 블러 */
+}
+.future-sun { width: 26px; height: 26px; }
+.future-deg {
+  font-family: var(--font-nav);
+  font-size: 31px;
+  letter-spacing: -0.01em;
+}
+
+/* 우측 구체 콜라주 — 화면을 압도하는 크기, 위아래로 살짝 넘침 */
+.future-sphere {
+  position: absolute;
+  right: -7vw;
+  top: 50%;
+  transform: translateY(-50%);
+  height: min(108vh, 72vw);
+  aspect-ratio: 1010 / 1078;
+}
+.future-sphere img,
+.future-sphere video {
+  width: 100%;
+  height: 100%;
+  /* 영상 프레임 비율이 달라도 기존 구체 자리에 맞춰 중앙 크롭 */
+  object-fit: cover;
+  display: block;
+  animation: sphereFloat 9s ease-in-out infinite;
+}
+@keyframes sphereFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(1.2deg); }
+}
+
+/* ─────────── 3. 히씨 제품 — 세로 스크롤 스테이지 ─────────── */
+.product {
+  position: relative;
+  /* 스테이지 수 × 100vh + 여유 = 스크롤 여정 길이 (main.js가 재계산) */
+  height: 320vh;
+}
+.product-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.product-title {
+  position: absolute;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 64px);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.product-title--a { left: 7.4vw; top: 16.5vh; }
+.product-title--b { left: 62vw; top: 55vh; }
+
+/* 중앙 제품 이미지 (시안: 467×467 정사각) — sticky 안이라 스크롤 중 고정
+   z-index로 타이포보다 항상 앞에 (문구는 사진 뒤로 지나감) */
+.product-media {
+  position: absolute;
+  left: 35vw;
+  top: 27vh;
+  width: min(29vw, 47vh);
+  z-index: 2;
+}
+.product-stream { z-index: 1; }          /* 좌상단 타이포·설명: 사진 뒤 */
+.product-stream--front { z-index: 3; }   /* 우하단 타이포: 사진 앞 */
+.product-img-stack {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #0a0a0a;
+}
+.stage-img {
+  position: absolute;
+  inset: 0;
+  background: var(--box);
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  opacity: 0;
+  scale: 1.06;
+  transition: opacity 0.55s ease, scale 0.55s ease;
+}
+.stage-img.is-cur { opacity: 1; scale: 1; }
+.stage-img video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 정사각 틀 기준 중앙 크롭 — 원본은 그대로 */
+}
+/* Full System 사진 루프 (1초 간격 크로스컷) */
+.stage-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+.stage-frame.is-frame-cur { opacity: 1; }
+
+.stage-img .stage-img-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: rgba(0, 0, 0, 0.4);
+}
+.product-img-cap {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: -0.025em;
+  color: #6c6c6c;
+  transition: opacity 0.35s;
+}
+.product-img-cap.is-swapping { opacity: 0; }
+
+/* 상승 스트림 — 스테이지별 전체 레이어 (타이포 + 우측 설명이 통째로 올라감) */
+.product-stream {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.stream-block {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100vh;
+}
+/* 우측 설명 칼럼 (시안: x1377 w195, 30% 흰색, 영어 고정) */
+.stream-side {
+  position: absolute;
+  right: 1.75vw;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(160px, 12.2vw, 240px);
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--dim);
+  white-space: pre-line; /* data.js의 \n 줄바꿈 유지 */
+}
+
+/* ─────────── 4. 히씨 세계관 영상 (가로 스크롤 콜라주) ─────────── */
+.worldview {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.collage-viewport {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;       /* 스크롤바 숨김 (미니멀) */
+  -webkit-overflow-scrolling: touch;
+}
+.collage-viewport::-webkit-scrollbar { display: none; }
+
+.collage-track {
+  position: relative;
+  height: 100%;
+  /* width는 main.js가 카드 배치 후 계산 */
+}
+
+/* 영상 카드 (테두리 없음) */
+.collage-card {
+  position: absolute;
+  background: var(--box);
+  cursor: pointer;
+  overflow: hidden;
+  transition: opacity 0.4s, filter 0.4s;
+}
+.collage-card .card-num {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: rgba(0, 0, 0, 0.45);
+}
+.collage-card video,
+.collage-card img {
+  /* 1px 오버스캔: 크기 반올림 때문에 위아래 생기던 흰 라인 제거 */
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  object-fit: cover;
+  display: block;
+}
+/* 중앙에서 먼 카드는 살짝 어둡게 (포커스 연출) */
+.collage-card.is-far { opacity: 0.5; }
+
+/* 공개 전 영상 (06~15): 불투명한 검은 박스 + Open D-1 */
+.collage-card.is-locked {
+  background: #0B0B0B;
+  cursor: default;
+}
+.collage-card.is-locked .locked-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: #6c6c6c;
+}
+
+.section-cap--worldview { z-index: 5; }
+
+/* ─────────── 영화뷰 (상세) ─────────── */
+/* 빨려들어가기: 클릭한 카드 위치·크기에서 시작해 풀스크린으로 확장
+   (시작 transform은 main.js가 인라인으로 설정) */
+.cinema {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  will-change: transform;
+}
+/* 내용물은 확장이 끝날 즈음 페이드 인 */
+.cinema-media, .cinema-title, .cinema-close {
+  opacity: 0;
+  transition: opacity 0.3s ease 0s;
+}
+.cinema.is-open .cinema-media,
+.cinema.is-open .cinema-title,
+.cinema.is-open .cinema-close {
+  opacity: 1;
+  transition-delay: 0.4s;
+}
+.cinema.is-closing { opacity: 0; transition: opacity 0.3s; }
+
+/* 시안: 상하 레터박스, 영상 풀블리드 */
+.cinema-media {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  aspect-ratio: 16 / 9;
+  max-height: 90vh;
+  background: #000;
+}
+.cinema-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.cinema-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: radial-gradient(120% 90% at 70% 20%, rgba(255,255,255,0.07), transparent 60%), #0a0a0a;
+}
+.cinema-placeholder-num {
+  font-family: var(--font-title);
+  font-size: 80px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+.cinema-placeholder-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.cinema-close {
+  position: absolute;
+  top: max(4vh, 24px);
+  right: 28px;
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cinema-close img { width: 24px; height: 24px; }
+
+.cinema-title {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: -0.025em;
+  color: var(--dim);
+  text-align: center;
+  width: min(700px, 80vw);
+}
+
+/* ─────────── 스크롤 인터랙션: 슬라이드 인 ───────────
+   .reveal 이 붙은 요소는 화면에 들어올 때 방향별로 미끄러져 들어옴.
+   방향: .reveal--left(왼쪽에서) --right(오른쪽에서) --up(아래에서)
+   지연: style="--reveal-delay: 0.15s" 로 순차 등장 */
+/* 주의: 이동은 transform이 아니라 별도의 translate/scale 속성을 쓴다.
+   (일부 요소는 transform을 중앙 정렬에 쓰고 있어서, transform을 건드리면
+   정렬이 깨진다 — 실제로 한 번 깨졌던 원인) */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    translate 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0s);
+  will-change: opacity, translate;
+}
+.reveal--left  { translate: -64px 0; }
+.reveal--right { translate: 64px 0; }
+.reveal--up    { translate: 0 48px; }
+.reveal--zoom  { translate: 0 24px; scale: 0.94; }
+.reveal.is-in  { opacity: 1; translate: 0 0; scale: 1; }
+/* 콜라주에서 중앙에서 먼 카드는 등장 후에도 흐림 유지 */
+.collage-card.reveal.is-in.is-far { opacity: 0.5; }
+
+/* 접근성: 움직임 최소화 설정 사용자는 애니메이션 생략 */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; translate: none; scale: none; transition: none; }
+}
+
+/* ─────────── 터치 이펙트: CO₂ 냉각가스 흔적 ─────────── */
+.gas-puff {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.1) 45%,
+    transparent 70%);
+  filter: blur(7px);
+  animation: gasPuff 2.8s ease-out forwards; /* 여운 길게 */
+}
+/* 스크롤/드래그 궤적용 잔가스: 더 작고 은은하게, 오래 남게 */
+.gas-puff--trail {
+  background: radial-gradient(circle,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.08) 45%,
+    transparent 70%);
+  animation-duration: 2.4s;
+}
+@keyframes gasPuff {
+  0%   { opacity: 0; scale: 0.25; translate: 0 0; }
+  10%  { opacity: 1; }
+  100% { opacity: 0; scale: 1.7; translate: 0 var(--gas-drift, -34px); }
+}
+
+/* ─────────── 반응형 (좁은 화면 보정) ─────────── */
+@media (max-width: 900px) {
+  .nav-left, .lang-toggle { font-size: 14px; }
+  .product-title--a { top: 13vh; }
+  .product-title--b { left: auto; right: 6vw; top: 60vh; }
+  .product-media { left: 8vw; top: 30vh; width: min(56vw, 42vh); }
+  .product-side { position: absolute; right: 6vw; top: 68vh; width: 60vw; }
+  .future-sphere { right: -18vw; width: min(80vw, 70vh); }
+}

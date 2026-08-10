@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>hissy — 2026 MEP</title>
+  <link rel="icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ─────────── 고정 헤더: 메뉴 / 중앙 로고 / KR·EN ─────────── -->
+  <header class="site-header">
+    <nav class="nav-left">
+      <a href="#hero" data-key="navWorldview">Worldview</a>
+      <a href="#" id="navInfoLink" class="is-disabled" data-key="navInfo">Info</a>
+    </nav>
+    <a class="logo" href="#hero" id="logoHome" aria-label="hissy home">
+      <img src="assets/logo.svg" alt="hissy" />
+    </a>
+    <nav class="lang-toggle" aria-label="language">
+      <button class="lang-btn is-active" data-lang="kr">KR</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </nav>
+  </header>
+
+  <!-- ─────────── 1. 히어로 (인터랙션 — 시안 확정 전 임시) ─────────── -->
+  <section class="hero" id="hero">
+    <canvas id="hazeCanvas"></canvas>
+    <div class="hero-fallback" id="heroFallback" hidden>
+      <h1>hissy</h1>
+    </div>
+  </section>
+
+  <!-- ─────────── 2. 히씨가 정의한 미래 ─────────── -->
+  <section class="future" id="future">
+    <div class="future-temp reveal reveal--left">
+      <p class="future-temp-label" id="futureTempLabel"></p>
+      <div class="future-temp-row">
+        <img src="assets/icon-sun.svg" alt="" class="future-sun" />
+        <span class="future-deg" id="futureDeg"></span>
+      </div>
+    </div>
+    <div class="future-sphere reveal reveal--right" style="--reveal-delay: 0.1s">
+      <img src="assets/sphere.png" alt="hissy phenomena archive sphere" id="sphereImg" />
+    </div>
+    <div class="section-cap reveal reveal--up" style="--reveal-delay: 0.25s">
+      <p class="cap-main" id="futureCap"></p>
+      <p class="cap-sub" id="futureCapSub"></p>
+    </div>
+  </section>
+
+  <!-- ─────────── 3. 히씨 제품 — 세로 스크롤 스테이지 ───────────
+       섹션 전체는 세로로 길고(스크롤 여정), 화면은 sticky로 고정.
+       스크롤 진행에 따라: 중앙 이미지는 고정된 채 스테이지별로 전환,
+       우측 텍스트 블록들이 아래에서 위로 올라감. -->
+  <section class="product" id="product">
+    <div class="product-sticky">
+      <!-- 고정되는 건 중앙 이미지뿐 — 타이포·설명은 전부 product-stream 안에서 함께 상승 -->
+      <div class="product-media reveal reveal--zoom">
+        <div class="product-img-stack" id="productImgStack"><!-- 스테이지 이미지: main.js 생성 --></div>
+        <p class="product-img-cap" id="productImgCap"></p>
+      </div>
+      <div class="product-stream" id="productStream"><!-- 사진 뒤 레이어(좌상단 타이포+우측 설명): main.js 생성 --></div>
+      <div class="product-stream product-stream--front" id="productStreamFront"><!-- 사진 앞 레이어(우하단 타이포): main.js 생성 --></div>
+      <div class="section-cap reveal reveal--up" style="--reveal-delay: 0.35s">
+        <p class="cap-main" id="productCap"></p>
+        <p class="cap-sub" id="productCapSub"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── 4. 히씨 세계관 영상 (가로 스크롤 콜라주) ─────────── -->
+  <section class="worldview" id="worldview">
+    <div class="collage-viewport" id="collageViewport">
+      <div class="collage-track" id="collageTrack"><!-- 카드는 main.js가 생성 --></div>
+    </div>
+    <div class="section-cap section-cap--worldview">
+      <p class="cap-main" id="wvCap"></p>
+      <p class="cap-sub" id="wvCapSub"></p>
+    </div>
+  </section>
+
+  <!-- 우측 페이지 인덱스 (노션 스타일 점프 내비) -->
+  <nav class="page-index" id="pageIndex" aria-label="page index"><!-- main.js가 생성 --></nav>
+
+  <!-- 고정 푸터 (우하단) -->
+  <footer class="site-footer">
+    <span>hissy 2026</span>
+    <span>2026 MEP EXHIBITION — SEOUL</span>
+  </footer>
+
+  <!-- ─────────── 영화뷰 (영상 클릭 시) ─────────── -->
+  <div class="cinema" id="cinema" hidden>
+    <div class="cinema-media">
+      <video id="cinemaVideo" playsinline controls preload="metadata"></video>
+      <div class="cinema-placeholder" id="cinemaPlaceholder" hidden>
+        <div class="cinema-placeholder-num" id="cinemaNum">01</div>
+        <div class="cinema-placeholder-text" data-key="comingSoon"></div>
+      </div>
+    </div>
+    <button class="cinema-close" id="cinemaClose" aria-label="close">
+      <img src="assets/icon-close.svg" alt="" />
+    </button>
+    <p class="cinema-title" id="cinemaTitle"></p>
+  </div>
+
+  <!-- 카드 아지랑이용 SVG 필터 -->
+  <svg class="svg-defs" aria-hidden="true">
+    <defs>
+      <filter id="cardHaze" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence id="hazeTurb" type="fractalNoise" baseFrequency="0.012 0.028" numOctaves="2" result="noise" seed="2" />
+        <feDisplacementMap id="hazeDisp" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <script src="js/data.js"></script>
+  <script src="js/haze.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
