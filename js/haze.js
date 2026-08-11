@@ -78,12 +78,12 @@ const HeroHaze = (() => {
       float n2 = fbm(auv * 6.0 + vec2(4.7, -t * 1.3));
       vec2 dir = vec2(n1 - 0.5, n2 - 0.5);
 
-      float baseAmp = 0.009 + 0.004 * sin(uTime * 0.7);
+      float baseAmp = 0.005 + 0.002 * sin(uTime * 0.7);
 
       /* ── 2) 커서/터치 주변 열 집중 ── */
       vec2 m = vec2(uMouse.x * aspect, uMouse.y);
       float md = distance(auv, m);
-      float mouseAmp = smoothstep(0.55, 0.0, md) * 0.075 * uMouse.z;
+      float mouseAmp = smoothstep(0.5, 0.0, md) * 0.04 * uMouse.z;
 
       /* ── 3) 냉각 파동: 탭 지점에서 퍼지며 왜곡을 지움 ── */
       vec2 c = vec2(uCool.x * aspect, uCool.y);
@@ -167,8 +167,8 @@ const HeroHaze = (() => {
     textCtx.fillStyle = muted;
     textCtx.fillText('NO VIRTUE IN ENDURANCE', w / 2, subY + subSize * 2.6);
 
-    // 온도 포인트 (레드는 여기 한 곳만)
-    textCtx.fillStyle = accent;
+    // 온도 라인 (회색)
+    textCtx.fillStyle = muted;
     textCtx.fillText('35°C AND CLIMBING', w / 2, subY + subSize * 4.0);
   }
 
