@@ -131,35 +131,29 @@ const HeroHaze = (() => {
     textCtx.fillStyle = bg;
     textCtx.fillRect(0, 0, w, h);
 
-    // 메인: 공식 로고 (로드 전에는 임시로 텍스트) — 영상이 들어오면 위쪽으로
     textCtx.textAlign = 'center';
     textCtx.textBaseline = 'middle';
-    const logoCenterY = heroVideoReady ? h * 0.27 : h * 0.44;
-    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-      let lw = w * (heroVideoReady ? 0.5 : 0.68);
-      let lh = lw * (logoImg.naturalHeight / logoImg.naturalWidth);
-      const maxH = heroVideoReady ? h * 0.3 : h * 0.5;
-      if (lh > maxH) { lh = maxH; lw = lh * (logoImg.naturalWidth / logoImg.naturalHeight); }
-      textCtx.drawImage(logoImg, (w - lw) / 2, logoCenterY - lh / 2, lw, lh);
+
+    // 히어로 메인: 02 영상을 정중앙에 (로고 없음)
+    // 이 캔버스가 통째로 셰이더 텍스처가 되므로 영상에도 아지랑이가 걸림
+    const subSize = Math.max(13, Math.min(w * 0.016, 20));
+    let subY = h * 0.68;
+    if (heroVideoReady && heroVideo.videoWidth > 0) {
+      const vw = w * 0.5;
+      const vh = vw * (heroVideo.videoHeight / heroVideo.videoWidth);
+      const vy = h * 0.45 - vh / 2;
+      textCtx.drawImage(heroVideo, (w - vw) / 2, vy, vw, vh);
+      subY = vy + vh + Math.max(34, h * 0.07); // 카피는 영상 바로 아래
     } else {
+      // 영상 로드 전/실패 시 임시 타이포
       const titleSize = Math.min(w * 0.26, h * 0.44);
       textCtx.fillStyle = ink;
       textCtx.font = `400 ${titleSize}px ${fontEn}`;
-      textCtx.fillText('hissy', w / 2, logoCenterY);
-    }
-
-    // 로고 아래 02 영상 — 이 캔버스가 통째로 셰이더 텍스처가 되므로
-    // 영상 위에도 아지랑이 왜곡·터치 냉각이 그대로 걸림
-    if (heroVideoReady && heroVideo.videoWidth > 0) {
-      const vw = w * 0.38;
-      const vh = vw * (heroVideo.videoHeight / heroVideo.videoWidth);
-      textCtx.drawImage(heroVideo, (w - vw) / 2, h * 0.42, vw, vh);
+      textCtx.fillText('hissy', w / 2, h * 0.44);
     }
 
     // 서브 카피 (KR/EN)
     const sub = UI_TEXT.heroSub[lang];
-    const subSize = Math.max(13, Math.min(w * 0.016, 20));
-    const subY = heroVideoReady ? h * 0.85 : h * 0.68;
     textCtx.font = lang === 'en'
       ? `400 ${subSize}px ${fontEn}`
       : `500 ${subSize}px ${fontKr}`;
@@ -167,16 +161,15 @@ const HeroHaze = (() => {
     const spaced = lang === 'en' ? sub.split('').join('  ') : sub;
     textCtx.fillText(spaced, w / 2, subY);
 
-    // 스펙시트 무드의 모노 라인 (영상 모드에선 간격 살짝 좁게)
-    const gap = heroVideoReady ? 2.2 : 2.6;
+    // 스펙시트 무드의 모노 라인
     const monoSize = Math.max(10, subSize * 0.72);
     textCtx.font = `400 ${monoSize}px ${fontMono}`;
     textCtx.fillStyle = muted;
-    textCtx.fillText('NO VIRTUE IN ENDURANCE', w / 2, subY + subSize * gap);
+    textCtx.fillText('NO VIRTUE IN ENDURANCE', w / 2, subY + subSize * 2.6);
 
     // 온도 포인트 (레드는 여기 한 곳만)
     textCtx.fillStyle = accent;
-    textCtx.fillText('35°C AND CLIMBING', w / 2, subY + subSize * (gap + 1.4));
+    textCtx.fillText('35°C AND CLIMBING', w / 2, subY + subSize * 4.0);
   }
 
   function uploadTexture() {
