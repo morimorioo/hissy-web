@@ -514,11 +514,29 @@ document.querySelectorAll('.lang-btn').forEach((b) =>
    우측 페이지 인덱스 — 섹션 점프 + 현재 위치 표시
    ============================================================ */
 const PAGE_SECTIONS = [
-  { id: 'hero', label: '01', name: 'Hissy™' },
-  { id: 'future', label: '02', name: 'Visioning the Future' },
-  { id: 'product', label: '03', name: 'Our Products' },
-  { id: 'worldview', label: '04', name: 'Hissy Universe' },
+  { id: 'film', label: '01', name: 'Brand Film' },
+  { id: 'hero', label: '02', name: 'Hissy™' },
+  { id: 'future', label: '03', name: 'Visioning the Future' },
+  { id: 'product', label: '04', name: 'Our Products' },
+  { id: 'worldview', label: '05', name: 'Hissy Universe' },
 ];
+
+/* 브랜드 필름: 항상 소리 없이 무한 자동재생 (화면에 있을 때만) */
+const brandFilm = $('brandFilm');
+// 전시장 안전장치: 어떤 이유로든 멈춰 있으면 3초마다 재생 재시도
+setInterval(() => {
+  const r = $('film').getBoundingClientRect();
+  const inView = r.bottom > 0 && r.top < window.innerHeight;
+  if (inView && brandFilm.paused) brandFilm.play().catch(() => {});
+}, 3000);
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) brandFilm.play().catch(() => {});
+      else brandFilm.pause();
+    });
+  }, { threshold: 0.25 }).observe($('film'));
+}
 
 function buildPageIndex() {
   const wrap = $('pageIndex');
